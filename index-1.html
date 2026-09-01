@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DC MDT - نظام البيانات الميدانية</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#08090c;color:#f2f2f2;font-family:Arial,Tahoma,sans-serif}
+.app{display:flex;min-height:100vh}
+.side{width:250px;background:#0d0e12;border-left:1px solid #2a0b0b;padding:22px 16px}
+.logo{font-size:27px;font-weight:900;color:#e51b23;margin-bottom:35px}.logo span{font-size:11px;color:#888;display:block;margin-top:5px}
+.nav{display:grid;gap:8px}.nav button{border:1px solid transparent;background:transparent;color:#aaa;text-align:right;padding:13px 14px;border-radius:9px;font-size:15px;cursor:pointer}
+.nav button.active,.nav button:hover{background:#2a0f12;color:#fff;border-color:#65151a}
+.main{flex:1;padding:25px 30px}
+.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #29292d;padding-bottom:20px}
+.title h1{margin:0;font-size:25px}.title p{margin:7px 0 0;color:#888;font-size:13px}
+.user{display:flex;gap:10px;align-items:center;background:#121318;padding:9px 13px;border-radius:10px;border:1px solid #29292d}
+.avatar{width:35px;height:35px;border-radius:50%;background:#b51219;display:grid;place-items:center;font-weight:bold}
+.search{margin:25px 0;display:flex;gap:10px}.search input{flex:1;background:#111217;border:1px solid #34353a;color:#fff;padding:14px;border-radius:9px;outline:none}.search button{background:#d71920;color:#fff;border:0;border-radius:9px;padding:0 24px;font-weight:bold;cursor:pointer}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:#111217;border:1px solid #292b30;border-radius:12px;padding:18px}.card small{color:#929292}.num{font-size:27px;font-weight:800;margin-top:9px}
+.grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:20px}.panel{background:#111217;border:1px solid #292b30;border-radius:12px;padding:18px}.panel h2{font-size:17px;margin:0 0 16px}.row{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid #24252a;color:#ccc}.row:last-child{border:0}.tag{font-size:11px;padding:5px 8px;border-radius:6px;background:#241013;color:#f17b80}
+#citizenPanel{display:none;margin-top:20px}.profile{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{background:#0c0d11;border:1px solid #292b30;border-radius:9px;padding:14px}.field small{display:block;color:#888;margin-bottom:7px}.field b{font-size:16px}.back{margin-top:16px;background:#2a0f12;border:1px solid #65151a;color:#fff;padding:10px 16px;border-radius:8px;cursor:pointer}
+@media(max-width:850px){.side{width:190px}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+@media(max-width:600px){.side{display:none}.main{padding:18px}.cards{grid-template-columns:1fr}.profile{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+<div class="logo">♛ DC <span>Mobile Data Terminal</span></div>
+<div class="nav">
+<button class="active" onclick="showHome()">⌂　الرئيسية</button>
+<button onclick="focusSearch()">⌕　البحث</button>
+<button onclick="showCitizen()">♟　المواطنين</button>
+<button>▣　المركبات</button>
+<button>⚑　البلاغات</button>
+<button>▤　القضايا</button>
+<button>◉　الأفراد</button>
+<button>⚙　الإعدادات</button>
+</div>
+</aside>
+<main class="main">
+<div class="top">
+<div class="title"><h1>لوحة التحكم</h1><p>نظام إدارة البيانات الميدانية — DC</p></div>
+<div class="user"><div class="avatar">DC</div><div><b>المستخدم</b><br><small>متصل الآن</small></div></div>
+</div>
+<div class="search">
+<input id="searchInput" placeholder="ابحث عن مواطن، رقم الهوية، مركبة أو لوحة..." onkeydown="if(event.key==='Enter')searchCitizen()">
+<button onclick="searchCitizen()">بحث</button>
+</div>
+<section class="cards" id="home">
+<div class="card"><small>المواطنين</small><div class="num">1</div></div>
+<div class="card"><small>المركبات</small><div class="num">1</div></div>
+<div class="card"><small>البلاغات المفتوحة</small><div class="num">0</div></div>
+<div class="card"><small>القضايا النشطة</small><div class="num">0</div></div>
+</section>
+<section class="grid" id="dashboard">
+<div class="panel"><h2>آخر المواطنين</h2>
+<div class="row" onclick="showCitizen()" style="cursor:pointer"><span>0010 — غياث البلوي</span><span class="tag">شرطة DC</span></div>
+</div>
+<div class="panel"><h2>الوصول السريع</h2>
+<div class="row" onclick="showCitizen()" style="cursor:pointer"><span>ملف غياث البلوي</span><span>→</span></div>
+<div class="row"><span>البحث عن مركبة</span><span>→</span></div>
+<div class="row"><span>فتح قضية جديدة</span><span>→</span></div>
+<div class="row"><span>إضافة بلاغ</span><span>→</span></div>
+</div>
+</section>
+<section id="citizenPanel" class="panel">
+<h2>ملف المواطن — غياث البلوي</h2>
+<div class="profile">
+<div class="field"><small>الاسم</small><b>غياث البلوي</b></div>
+<div class="field"><small>رقم المواطن</small><b>0010</b></div>
+<div class="field"><small>العمر</small><b>23</b></div>
+<div class="field"><small>الوظيفة</small><b>شرطة DC</b></div>
+<div class="field"><small>عدد المركبات</small><b>1</b></div>
+<div class="field"><small>المركبات</small><b>Bentley</b></div>
+<div class="field"><small>رقم اللوحة</small><b>R DF 11</b></div>
+</div>
+<button class="back" onclick="showHome()">← العودة للوحة التحكم</button>
+</section>
+</main>
+</div>
+<script>
+function showCitizen(){
+ document.getElementById('dashboard').style.display='none';
+ document.getElementById('home').style.display='none';
+ document.getElementById('citizenPanel').style.display='block';
+}
+function showHome(){
+ document.getElementById('dashboard').style.display='grid';
+ document.getElementById('home').style.display='grid';
+ document.getElementById('citizenPanel').style.display='none';
+}
+function focusSearch(){
+ document.getElementById('searchInput').focus();
+}
+function searchCitizen(){
+ const q=document.getElementById('searchInput').value.trim();
+ if(!q)return;
+ if(q.includes('غياث')||q.includes('البلوي')||q==='0010'){
+   showCitizen();
+ }else{
+   alert('لا توجد نتائج مطابقة في سجل المواطنين.');
+ }
+}
+</script>
+</body>
+</html>
